@@ -21,33 +21,31 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api")
 public class PersonController {
-	
+
 	public final PersonService personService;
-	
-	@GetMapping(path = "/person{personId}")
+
+	@GetMapping(path = "/person/{personId}")
 	public ResponseEntity<GenralResponse> getPerson(@PathVariable String personId) {
 		PersonDto person = personService.getPerson(personId);
-		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK,null,"Data Provided",person));
+		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK, null, "Data Provided", person));
 	}
-	
+
 	@PostMapping(path = "/person")
 	public ResponseEntity<GenralResponse> registerPerson(@RequestBody PersonDto personDto) {
 		PersonDto savePerson = personService.savePerson(personDto);
-		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK,null,"Data updated",savePerson));
+		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK, null, "Data updated", savePerson));
 	}
-	
-	@PutMapping(path = "/person{personId}")
-	public ResponseEntity<GenralResponse> updatePerson(@PathVariable String personId,@RequestBody PersonDto personDto) {
-		PersonDto updatePerson = personService.updatePerson(personId, personDto);
-		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK,null,"Data updated",updatePerson));
-	}
-	
-	
-	@DeleteMapping(path = "/person{personId}")
-	public ResponseEntity<GenralResponse> DeletePerson(@PathVariable String personId,@RequestBody PersonDto personDto) {
-		boolean deletePerson = personService.deletePerson(personId);
-		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK,null,"Data updated",deletePerson));
-	}
-	
 
+	@PutMapping(path = "/person/{personId}")
+	public ResponseEntity<GenralResponse> updatePerson(@PathVariable String personId,
+			@RequestBody PersonDto personDto) {
+		PersonDto updatePerson = personService.updatePerson(personId, personDto);
+		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK, null, "Data updated", updatePerson));
+	}
+
+	@DeleteMapping(path = "/person/{personId}")
+	public ResponseEntity<GenralResponse> deletePerson(@PathVariable String personId) {
+		boolean deletePerson = personService.deletePerson(personId);
+		return ResponseEntity.ok().body(new GenralResponse(HttpStatus.OK, null, "Data updated", deletePerson));
+	}
 }

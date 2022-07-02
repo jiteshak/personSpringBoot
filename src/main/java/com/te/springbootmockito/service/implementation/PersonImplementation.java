@@ -3,9 +3,7 @@ package com.te.springbootmockito.service.implementation;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.te.springbootmockito.entity.Person;
 import com.te.springbootmockito.entity.dto.PersonDto;
@@ -22,9 +20,14 @@ public class PersonImplementation implements PersonService {
 
 	@Override
 	public PersonDto getPerson(String personId) {
-		PersonDto personDto = new PersonDto();
-		BeanUtils.copyProperties(personRepository.findById(personId), personDto);
-		return personDto;
+		Optional<Person> findById = personRepository.findById(personId);
+		if (findById.isPresent()) {
+			PersonDto personDto = new PersonDto();
+			Person person = findById.get();
+			BeanUtils.copyProperties(person, personDto);
+			return personDto;
+		}
+		return null;
 	}
 
 	@Override
@@ -32,6 +35,7 @@ public class PersonImplementation implements PersonService {
 		Person person = new Person();
 		BeanUtils.copyProperties(personDto, person);
 		personRepository.save(person);
+		BeanUtils.copyProperties(person, personDto);
 		return personDto;
 	}
 
@@ -41,7 +45,9 @@ public class PersonImplementation implements PersonService {
 		if (optional.isPresent()) {
 			Person person = optional.get();
 			BeanUtils.copyProperties(personDto, person);
-			personRepository.save(person);
+			person= personRepository.save(person);
+			BeanUtils.copyProperties(person, personDto);
+			return personDto;
 		}
 		return null;
 	}
@@ -49,12 +55,11 @@ public class PersonImplementation implements PersonService {
 	@Override
 	public boolean deletePerson(String personId) {
 		Optional<Person> optional = personRepository.findById(personId);
-		if(optional.isPresent()) {
+		if (optional.isPresent()) {
 			Person person = optional.get();
 			personRepository.delete(person);
 			return true;
 		}
 		return false;
 	}
-
 }
